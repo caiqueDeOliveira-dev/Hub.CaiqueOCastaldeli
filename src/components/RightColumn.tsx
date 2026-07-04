@@ -29,14 +29,19 @@ const RightColumn = () => {
   const [visitorCount, setVisitorCount] = useState(0);
 
   useEffect(() => {
-    let cur = 0;
-    const target = 1;
-    const step = () => {
-      cur += Math.ceil((target - cur) / 8) || (target > cur ? 1 : 0);
-      setVisitorCount(cur);
-      if (cur < target) requestAnimationFrame(step);
-    };
-    requestAnimationFrame(step);
+    fetch("/api/visitor")
+      .then((res) => res.json())
+      .then((data) => {
+        const target = data.count;
+        let cur = 0;
+        const step = () => {
+          cur += Math.ceil((target - cur) / 8) || (target > cur ? 1 : 0);
+          setVisitorCount(cur);
+          if (cur < target) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+      })
+      .catch(() => {});
   }, []);
 
   return (
